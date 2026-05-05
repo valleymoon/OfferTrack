@@ -15,6 +15,7 @@ build/
 dist/
 *.egg-info/
 *.egg
+*.exe
 
 # 测试与覆盖率
 .pytest_cache/
