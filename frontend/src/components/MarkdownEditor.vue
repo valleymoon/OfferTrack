@@ -20,6 +20,7 @@ function onChange(v: string) {
 
 <template>
   <MdEditor
+    class="ot-md-editor"
     :model-value="modelValue"
     :editor-id="editorId"
     :placeholder="placeholder"
@@ -30,3 +31,18 @@ function onChange(v: string) {
     @on-change="onChange"
   />
 </template>
+
+<style scoped>
+/* 让中文长文本（无空格）能在编辑器与预览区里正常换行，避免横向溢出被裁掉看起来像 "..." 折叠 */
+.ot-md-editor :deep(.cm-line),
+.ot-md-editor :deep(.cm-content),
+.ot-md-editor :deep(textarea),
+.ot-md-editor :deep(.md-editor-preview),
+.ot-md-editor :deep(.md-editor-preview p),
+.ot-md-editor :deep(.md-editor-preview pre),
+.ot-md-editor :deep(.md-editor-preview code) {
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+</style>

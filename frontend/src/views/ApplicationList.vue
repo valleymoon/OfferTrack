@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { applicationsApi, type Application } from '../api/applications'
 import ApplicationFormModal from '../components/ApplicationFormModal.vue'
+import LinkifiedText from '../components/LinkifiedText.vue'
 
 const items = ref<Application[]>([])
 const loading = ref(false)
@@ -140,7 +141,10 @@ onMounted(loadAll)
               >{{ item.company }}</RouterLink>
               <div class="text-sm text-gray-500">{{ item.position }}</div>
             </td>
-            <td class="px-4 py-3 text-sm text-gray-600">{{ item.channel || '—' }}</td>
+            <td class="px-4 py-3 text-sm text-gray-600 max-w-xs">
+              <LinkifiedText v-if="item.channel" :text="item.channel" />
+              <span v-else>—</span>
+            </td>
             <td class="px-4 py-3 text-sm text-gray-600">{{ fmtDate(item.applied_at) }}</td>
             <td class="px-4 py-3">
               <span

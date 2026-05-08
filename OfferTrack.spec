@@ -1,9 +1,11 @@
 # -*- mode: python ; coding: utf-8 -*-
+import sys
 from pathlib import Path
 
 PROJECT_ROOT = Path(SPECPATH).resolve()
 BACKEND_APP_DIR = PROJECT_ROOT / "backend" / "app"
 FRONTEND_DIST_DIR = PROJECT_ROOT / "frontend" / "dist"
+ICON_FILE = PROJECT_ROOT / "assets" / "app.ico"
 
 datas = [
     (str(BACKEND_APP_DIR), "app"),
@@ -11,6 +13,10 @@ datas = [
 
 if FRONTEND_DIST_DIR.exists():
     datas.append((str(FRONTEND_DIST_DIR), "frontend_dist"))
+
+if ICON_FILE.exists():
+    # 把 ico 平铺到打包根，runtime 里 sys._MEIPASS/app.ico 可直接读
+    datas.append((str(ICON_FILE), "."))
 
 hiddenimports = [
     "uvicorn",
@@ -35,6 +41,8 @@ hiddenimports = [
     "app.database",
     "app.models",
     "app.schemas",
+    "app.paths",
+    "app.runtime",
     "app.routers",
     "app.routers.applications",
     "app.routers.events",
@@ -42,7 +50,19 @@ hiddenimports = [
     "app.routers.dashboard",
     "app.routers.backup",
     "sqlalchemy.dialects.sqlite",
+    "webview",
 ]
+
+if sys.platform == "win32":
+    hiddenimports += [
+        "webview.platforms.edgechromium",
+        "win32api",
+        "win32con",
+        "win32event",
+        "win32gui",
+        "win32process",
+        "winerror",
+    ]
 
 
 a = Analysis(
@@ -73,10 +93,11 @@ exe = EXE(
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,
+    console=False,
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
+    icon=str(ICON_FILE) if ICON_FILE.exists() else None,
 )

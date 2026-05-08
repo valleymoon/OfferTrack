@@ -40,6 +40,22 @@ app.include_router(dashboard.router)
 app.include_router(backup.router)
 
 
+@app.post("/api/focus")
+def focus_window():
+    """单实例第二次启动时由 launcher 调用，把已有窗口拉到前台。
+
+    异步执行 bring_to_front：endpoint 立即返回 200。pywebview 的 form.show() 走 GUI
+    线程 marshal，连续触发会排队，sync endpoint 等它返回容易超过 launcher 端的
+    timeout=2，被误判为"无法联系"。结果/失败信息靠 runtime._log 写到 offertrack.log。
+    """
+    import threading
+
+    from .runtime import bring_to_front
+
+    threading.Thread(target=bring_to_front, daemon=True).start()
+    return {"ok": True}
+
+
 FRONTEND_DIST = _get_frontend_dist()
 
 if FRONTEND_DIST.exists():

@@ -42,14 +42,14 @@ function openEdit(q: InterviewQuestion) {
 
 async function handleSubmit(data: {
   question: string
-  my_answer: string
   reflection: string
   tags: string
 }) {
+  const payload = { ...data, my_answer: '' }
   if (editing.value) {
-    await questionsApi.update(editing.value.id, data)
+    await questionsApi.update(editing.value.id, payload)
   } else {
-    await questionsApi.create({ event_id: props.eventId, ...data })
+    await questionsApi.create({ event_id: props.eventId, ...payload })
   }
   modalOpen.value = false
   await load()
@@ -63,7 +63,7 @@ async function handleDelete(q: InterviewQuestion) {
 
 function firstLine(text: string): string {
   const line = text.split('\n').find(l => l.trim().length > 0) ?? ''
-  return line.replace(/^#+\s*/, '').slice(0, 80)
+  return line.replace(/^#+\s*/, '')
 }
 
 const tagList = computed(() => (q: InterviewQuestion) =>
@@ -106,7 +106,7 @@ onMounted(load)
             {{ expanded.has(q.id) ? '▼' : '▶' }}
           </span>
           <div class="flex-1 min-w-0">
-            <div class="text-sm text-gray-800 truncate">{{ firstLine(q.question) || '（空题目）' }}</div>
+            <div class="text-sm text-gray-800 break-words whitespace-pre-wrap">{{ firstLine(q.question) || '（空题目）' }}</div>
             <div v-if="tagList(q).length" class="mt-1 flex flex-wrap gap-1">
               <span
                 v-for="tag in tagList(q)"
@@ -125,10 +125,6 @@ onMounted(load)
           <section>
             <h5 class="text-xs font-semibold text-gray-500 mb-1">题目</h5>
             <MarkdownPreview :model-value="q.question" :editor-id="`q-${q.id}-question`" />
-          </section>
-          <section v-if="q.my_answer">
-            <h5 class="text-xs font-semibold text-gray-500 mb-1">我的回答</h5>
-            <MarkdownPreview :model-value="q.my_answer" :editor-id="`q-${q.id}-answer`" />
           </section>
           <section v-if="q.reflection">
             <h5 class="text-xs font-semibold text-gray-500 mb-1">复盘</h5>

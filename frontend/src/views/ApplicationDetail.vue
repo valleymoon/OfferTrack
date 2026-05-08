@@ -6,6 +6,7 @@ import { eventsApi, type TimelineEvent } from '../api/events'
 import ApplicationFormModal from '../components/ApplicationFormModal.vue'
 import TimelineEventModal from '../components/TimelineEventModal.vue'
 import QuestionsSection from '../components/QuestionsSection.vue'
+import LinkifiedText from '../components/LinkifiedText.vue'
 import { isInterviewLikeStage } from '../api/questions'
 
 const route = useRoute()
@@ -158,9 +159,10 @@ onMounted(loadAll)
             <span class="text-gray-500">投递时间：</span>
             <span>{{ fmtDateTime(application.applied_at) }}</span>
           </div>
-          <div>
+          <div class="min-w-0">
             <span class="text-gray-500">投递渠道：</span>
-            <span>{{ application.channel || '—' }}</span>
+            <LinkifiedText v-if="application.channel" :text="application.channel" />
+            <span v-else>—</span>
           </div>
         </div>
 
@@ -172,7 +174,9 @@ onMounted(loadAll)
           <summary class="cursor-pointer text-gray-700 hover:text-gray-900 font-medium">
             JD（点击展开）
           </summary>
-          <pre class="mt-2 p-3 bg-gray-50 border rounded whitespace-pre-wrap font-mono text-xs">{{ application.jd }}</pre>
+          <div class="mt-2 p-3 bg-gray-50 border rounded font-mono text-xs">
+            <LinkifiedText :text="application.jd" />
+          </div>
         </details>
       </div>
 

@@ -10,11 +10,10 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:modelValue': [v: boolean]
-  submit: [data: { question: string; my_answer: string; reflection: string; tags: string }]
+  submit: [data: { question: string; reflection: string; tags: string }]
 }>()
 
 const question = ref('')
-const myAnswer = ref('')
 const reflection = ref('')
 const tags = ref('')
 
@@ -22,7 +21,6 @@ const tags = ref('')
 const sessionId = ref(Date.now())
 const editorIds = computed(() => ({
   question: `md-question-${sessionId.value}`,
-  answer: `md-answer-${sessionId.value}`,
   reflection: `md-reflection-${sessionId.value}`,
 }))
 
@@ -31,12 +29,10 @@ watch(() => [props.modelValue, props.initial] as const, ([open, initial]) => {
   sessionId.value = Date.now()
   if (initial) {
     question.value = initial.question
-    myAnswer.value = initial.my_answer
     reflection.value = initial.reflection
     tags.value = initial.tags
   } else {
     question.value = ''
-    myAnswer.value = ''
     reflection.value = ''
     tags.value = ''
   }
@@ -50,7 +46,6 @@ function submit() {
   if (!question.value.trim()) return
   emit('submit', {
     question: question.value,
-    my_answer: myAnswer.value,
     reflection: reflection.value,
     tags: tags.value,
   })
@@ -91,16 +86,6 @@ function submit() {
           v-model="question"
           :editor-id="editorIds.question"
           placeholder="题目内容，支持 Markdown 与代码块"
-          height="280px"
-        />
-      </div>
-
-      <div>
-        <label class="block text-sm font-medium mb-1">我的回答</label>
-        <MarkdownEditor
-          v-model="myAnswer"
-          :editor-id="editorIds.answer"
-          placeholder="当时的作答（可贴代码）"
           height="280px"
         />
       </div>

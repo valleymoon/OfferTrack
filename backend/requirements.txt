@@ -20,3 +20,5 @@ typing_extensions==4.15.0
 uvicorn==0.46.0
 watchfiles==1.1.1
 websockets==16.0
+pywebview>=5.0
+pywin32>=306; sys_platform == "win32"

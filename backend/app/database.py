@@ -1,17 +1,9 @@
-import sys
-from pathlib import Path
-
 from sqlmodel import Session, SQLModel, create_engine
 
-
-def _get_app_root() -> Path:
-    if getattr(sys, "frozen", False):
-        return Path(sys.executable).resolve().parent
-    return Path(__file__).resolve().parent.parent.parent
+from .paths import db_path
 
 
-DB_PATH = _get_app_root() / "data" / "offertrack.db"
-DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+DB_PATH = db_path()
 
 engine = create_engine(
     f"sqlite:///{DB_PATH}",
